@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Power Map Report</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!--
+        <link rel="stylesheet" href="Source/css/w3.css" /> Below code should import the css
+    -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='w3.css')}}"/> 
+    <link rel="stylesheet" href="{{ url_for('static', filename='font-awesome.min.css')}}" />
+    <style>
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6 {
+            font-family: "Raleway", sans-serif;
+        }
+    </style>
+</head>
+
+<body class="w3-dark-grey">
+    <!-- Navbar (sit on top) -->
+    <div class="w3-top">
+        <div class="w3-bar w3-black w3-card" id="cxNavbar">
+            <a href="/" class="w3-bar-item w3-button w3-wide"><img src="{{ url_for('static', filename='cxlabs_small.png')}}"
+                    alt="CX-Labs" /></a>
+        </div>
+    </div>
+    <!-- Top container -->
+    <div class="w3-bar w3-top w3-black w3-large" style="z-index: 4">
+        <button class="w3-bar-item w3-button w3-hide-large w3-hover-none w3-hover-text-light-grey" onclick="w3_open();">
+            <i class="fa fa-bars"></i>  Menu
+        </button>
+        <a href="/" class="w3-bar-item w3-button w3-wide"><img src="{{ url_for('static', filename='cxlabs_small.png')}}"
+                alt="CX-Labs" /></a>
+    </div>
+    <!-- Isolate results by clicking these containers (Valid/No Auto-Config/Not Scanned) -->
+    <!--
+        <h3>portion_of_results / total_number_results</h3> will list the number of items of each (ofValid/ofNoAutoConfig/ofNotScanned)
+    -->
+    <div class="w3-row-padding w3-margin-bottom" style="padding: 128px 16px">
+        <a href="/valid">
+            <div class="w3-third">
+                <div class="w3-container w3-green w3-hover-opacity w3-padding-16">
+                    <div class="w3-left"><i class="fa fa-check w3-xxxlarge"></i></div>
+                    <div class="w3-right">
+                        <h3>{{ valid }} / {{ total_devices }}</h3>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Valid</h4>
+                </div>
+            </div>
+        </a>
+        <a href="/noconfig">
+            <div class="w3-third">
+                <div class="w3-container w3-yellow w3-hover-opacity w3-padding-16">
+                    <div class="w3-left"><i class="fa fa-plug w3-xxxlarge"></i></div>
+                    <div class="w3-right">
+                        <h3>{{ noconfig }} / {{ total_devices }}</h3>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>No Autoconfig</h4>
+                </div>
+            </div>
+        </a>
+        <a href="/unsynced">
+            <div class="w3-third">
+                <div class="w3-container w3-red w3-hover-opacity w3-padding-16">
+                    <div class="w3-left"><i class="fa fa-warning w3-xxxlarge"></i></div>
+                    <div class="w3-right">
+                        <h3>{{ unsynced }} / {{total_devices}}</h3>
+                    </div>
+                    <div class="w3-clear"></div>
+                    <h4>Not Scanned</h4>
+                </div>
+            </div>
+        </a>
+    </div>
+    </div>
+    <!-- Exception List -->
+    <div class="w3-container w3-padding" id="exception">
+        <!--Lab Dropdown-->
+        <!--
+         The select input options will need to be generated dynamically with the
+         dictionary of options with <option value="{{index_of_option}}">inner html of each</option>   
+        -->
+        <div class="w3-dropdown-click">
+            <select class="w3-select w3-padding" name="lab">
+                <option value="" disabled selected>Lab</option>
+                <option value="1">F241</option>
+                <option value="2">F340</option>
+            </select>
+        </div>
+        <!--Aisle Dropdown-->
+        <div class="w3-dropdown-click">
+            <select class="w3-select w3-padding" name="aisle">
+                <option value="" disabled selected>Aisle</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+            </select>
+        </div>
+        <!--Rack Dropdown-->
+        <div class="w3-dropdown-click">
+            <select class="w3-select w3-padding" name="rack">
+                <option value="" disabled selected>Rack</option>
+                <option value="1">Option 1</option>
+                <option value="2">Option 2</option>
+                <option value="3">Option 3</option>
+            </select>
+        </div>
+        <!-- Main area for the results based on selection of (Lab/Aisle/Rack)-->
+        <h3 class="w3-red w3-padding">Exceptions</h3>
+        <div class="w3-container">
+            <!-- Table data needs to be dynamically generated based on results and selected filter (Valid/No Auto-Config/Not Scanned)-->
+            <table class="w3-table w3-white w3-striped w3-bordered w3-hoverable">
+                <tr class="w3-black">
+                    <th>Device</th>
+                    <th>Location</th>
+                    <th>Device Type</th>
+                    <th>eITMS #</th>
+                    <th>Sync Time</th>
+                </tr>
+                {% block data %}
+                {% endblock %}
+            </table>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w3-center w3-black w3-padding-64">
+        <a href="/" class="w3-button w3-light-grey"><i class="fa fa-arrow-up w3-margin-right"></i>To the top</a>
+    </footer>
+
+    <script>
+        // Hide/show function, this can be removed a replaced with a better hide show function as this one does not deliver the desired results
+        function myFunction(id) {
+            var x = document.getElementById(id);
+            if (x.className.indexOf("w3-show") == -1) {
+                x.className += " w3-show";
+            } else {
+                x.className = x.className.replace(" w3-show", "");
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,7 @@
+# .gitignore
+.env
+_Classes/
+_Modules/
+OT6_API/
+__pycache__/
+templates/__pycache__/

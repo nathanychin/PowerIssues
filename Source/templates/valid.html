@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block data %}
+                {% for device in valid_devices %}
+                <tr id="{{ device.Audit_Id }}">
+                    <td>{{ device.data_title }}</td>
+                    <td>{{ device.aisle }} / {{ device.rack }}</td>
+                    <td>{{ device.device_type }}</td>
+                    <td><a href="{{ BASE_URL }}{{device.eitms}}" target="_blank">{{ device.eitms }}</a></td>
+                    <td>{{ device.sync_time }}</td>
+                </tr>
+                {% endfor %}
+{% endblock %}
